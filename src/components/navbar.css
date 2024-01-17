@@ -1,0 +1,33 @@
+.navbar {
+    background-color: #50c2df;
+}
+
+
+@media (max-width: 1000px) {
+    
+    body .navbar-hellblau .navbar-toggler {
+      display: block !important;
+
+    }
+
+    body .navbar-hellblau .navbar-collapse {
+      display: none !important;
+    }
+  }
+
+  @media (min-width: 1001px) {
+
+    body .navbar-hellblau .navbar-collapse {
+        display: flex !important;
+      }
+
+    body .navbar-hellblau .navbar-toggler {
+      display: none !important;
+    }
+    
+  }
+  
+
+
+
+  

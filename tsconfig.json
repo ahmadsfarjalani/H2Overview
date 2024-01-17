@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "src/components/__test__/mockFetch.ts", "src/components/__test__/ElementeGefunden.test.tsx", "src/backend/testdata.ts", "src/backend/fetchWithErrorHandling.tsx"  ]
 }
