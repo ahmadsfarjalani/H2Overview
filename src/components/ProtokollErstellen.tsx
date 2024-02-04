@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { createProtokoll, id } from '../backend/api';
 import { useLoginContext } from './LoginManager';
 import { LinkContainer } from 'react-router-bootstrap';
+import { ProtokollResource } from '../Resources';
 
 export default function ProtokollErstellen() {
   const navigate = useNavigate();
@@ -12,10 +13,30 @@ export default function ProtokollErstellen() {
   const [isClosed, setIsClosed] = useState(false);
   const [datum, setDatum] = useState('');
   const { loginInfo } = useLoginContext();
+  const [validationError, setValidationError] = useState('');
+
+  
+  const handlePatientChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    setPatient(input);
+
+    if (input.length > 0 && input.length < 3) {
+      setValidationError('Der Name des Patienten muss mindestens 3 Zeichen lang sein.');
+    } else {
+      setValidationError('');
+    }
+  };
+
 
 let e : any ;
-
   async function protokollErstellen() {
+    
+    if (patient.length < 3 || patient.length > 50) {
+      setValidationError('Der Name des Patienten muss mindestens 3 Zeichen und darf maximal 50 Zeichen lang sein.');
+      return; 
+    }
+
+
     
 if (loginInfo) {
   e = loginInfo.userId;
@@ -34,6 +55,7 @@ if (loginInfo) {
 
     } catch (error) {
       console.error('Fehler beim Erstellen des Protokolls', error);
+
     }
   }
 
@@ -41,9 +63,18 @@ if (loginInfo) {
     <div style={{ marginTop: "5rem" }}>
       <Form onSubmit={protokollErstellen}>
         <Row className="mb-3">
-          <Form.Group as={Col} controlId="formGridEmail">
+          <Form.Group as={Col}>
             <Form.Label>Patient</Form.Label>
-            <Form.Control type="text" placeholder="Name des Patienten" value={patient} onChange={e => setPatient(e.target.value)} />
+            <Form.Control 
+              type="text" 
+              placeholder="Name des Patienten" 
+              value={patient} 
+              onChange={handlePatientChange}
+              minLength={3}
+              maxLength={50} 
+              required 
+            />
+            {validationError && <div style={{ color: 'red' }}>{validationError}</div>}
           </Form.Group>
 
           <Form.Group as={Col} controlId="formGridPublic">
@@ -74,3 +105,4 @@ if (loginInfo) {
     </div>
   );
 }
+

@@ -23,7 +23,6 @@ function App() {
     (async () => {
       const loginFromServer = await loginstatus();
 
-  
       setLoginInfo(loginFromServer);
     })();
   }, []);

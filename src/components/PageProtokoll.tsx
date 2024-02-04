@@ -9,6 +9,27 @@ import { LinkContainer } from "react-router-bootstrap";
 
 
 export default function PageProtokoll() {
+
+    const validate = (e: React.FocusEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        let errorMessage: string | undefined;
+    
+        switch (name) {
+            case 'patient':
+                errorMessage = value.length < 3 ? 'Die Textlänge des Patienten muss mindestens 3 Zeichen lang sein.' : undefined;
+                break;
+            case 'datum':
+                errorMessage = !value.match(/^\d{2}\.\d{2}\.\d{4}$/) ? 'Das Datum muss im Format DD.MM.YYYY sein.' : undefined;
+                break;
+        }
+    
+        setValidationErrors(prevErrors => ({
+            ...prevErrors,
+            [name]: errorMessage,
+        }));
+    };
+    
+
     let e : any;
 
 
@@ -22,6 +43,8 @@ export default function PageProtokoll() {
     const [isClosed, setIsClosed] = useState(false);
     const { loginInfo } = useLoginContext();
     const [showDeleteModal, setShowDeleteModal] = useState(false); 
+    const [validationErrors, setValidationErrors] = useState<{ [key: string]: string | undefined }>({});
+
 
 
 
@@ -60,6 +83,8 @@ export default function PageProtokoll() {
 
     };
     
+
+    
     console.log("id=" + e!)
     try {
         setMyProtokoll(await updateProtokoll(protokollDaten))
@@ -94,28 +119,25 @@ export default function PageProtokoll() {
                                         Letztes Update: {myProtokoll.updatedAt}<br />
                                         Gesamtanzahl der Einträge: {myProtokoll.gesamtMenge}
                                     </Card.Text>
-                                    {/* Nur anzeigen, wenn der Benutzer angemeldet ist */}
-                                    {loginInfo&& id === myProtokoll.ersteller && (
+                                    {loginInfo && id === myProtokoll.ersteller && (
                                         <>
                                             <Button variant="primary" onClick={() => setHandleShow(true)}>Editieren</Button>
                                             <Button variant="danger" className="ms-2" onClick={() => setShowDeleteModal(true)}>Löschen</Button>
-                                            <LinkContainer to = {`/protokoll/${protokollId}/eintrag/neu`}>
-                                            <Button variant="secondary">Neuer Eintrag</Button>
+                                            <LinkContainer to={`/protokoll/${protokollId}/eintrag/neu`}>
+                                                <Button variant="secondary">Neuer Eintrag</Button>
                                             </LinkContainer>
                                         </>
                                     )}
-
                                 </Card.Body>
                                 <Card.Footer className="text-muted">Protokoll ID: {protokollId}</Card.Footer>
                             </Card>
         
-                            {/* Bearbeiten-Modal */}
                             <Modal show={handleShow} onHide={() => setHandleShow(false)}>
                                 <Modal.Header closeButton>
                                     <Modal.Title>Protokoll bearbeiten</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
-                                    <Form>
+                                    <Form noValidate>
                                         <Form.Group className="mb-3">
                                             <Form.Label>Patient</Form.Label>
                                             <Form.Control
@@ -123,7 +145,12 @@ export default function PageProtokoll() {
                                                 placeholder="Name des Patienten"
                                                 value={patient}
                                                 onChange={(e) => setPatient(e.target.value)}
+                                                onBlur={validate}
+                                                isInvalid={!!validationErrors.patient}
                                             />
+                                            <Form.Control.Feedback type="invalid">
+                                                {validationErrors.patient}
+                                            </Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group className="mb-3">
                                             <Form.Label>Datum</Form.Label>
@@ -131,7 +158,12 @@ export default function PageProtokoll() {
                                                 type="date"
                                                 value={datum}
                                                 onChange={(e) => setDatum(e.target.value)}
+                                                onBlur={validate}
+                                                isInvalid={!!validationErrors.datum}
                                             />
+                                            <Form.Control.Feedback type="invalid">
+                                                {validationErrors.datum}
+                                            </Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group className="mb-3">
                                             <Form.Check
@@ -161,7 +193,6 @@ export default function PageProtokoll() {
                                 </Modal.Footer>
                             </Modal>
         
-                            {/* Löschen-Modal */}
                             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
                                 <Modal.Header closeButton>
                                     <Modal.Title>Löschen</Modal.Title>
@@ -173,10 +204,10 @@ export default function PageProtokoll() {
                                     <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
                                         Abbrechen
                                     </Button>
-                                    <LinkContainer to ="/">
-                                    <Button variant="danger" onClick={deleteDasProtokoll}>
-                                        OK
-                                    </Button>
+                                    <LinkContainer to="/">
+                                        <Button variant="danger" onClick={deleteDasProtokoll}>
+                                            OK
+                                        </Button>
                                     </LinkContainer>
                                 </Modal.Footer>
                             </Modal>
@@ -200,5 +231,5 @@ export default function PageProtokoll() {
             </div>
         );
         
-}
+                    }
 }
