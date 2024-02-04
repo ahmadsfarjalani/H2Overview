@@ -2,6 +2,16 @@
     background-color: #50c2df;
 }
 
+.navbar-hellblau {
+  height: 60px; 
+  
+}
+
+.main-content {
+  padding-top: 70px; 
+  
+}
+
 
 @media (max-width: 1000px) {
     

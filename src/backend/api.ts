@@ -1,6 +1,7 @@
 import { EintragResource, LoginResource, ProtokollResource } from "../Resources";
 import { LoginInfo } from "../components/LoginManager";
 import { fetchWithErrorHandling } from "./fetchWithErrorHandling";
+export let id : any;
 
 export async function getAlleProtokolle(): Promise<ProtokollResource[]> {
     
@@ -38,16 +39,23 @@ export async function getEintrag(eintragId: string): Promise<EintragResource> {
 }
 
 export async function postLogin(benutzername: string, passwort: string): Promise<LoginResource> {
+
     const url = `${process.env.REACT_APP_API_SERVER_URL}/api/login/`;
     const response = await fetchWithErrorHandling(url, {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            Accept: "application/json",
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({name : benutzername , password:passwort}),
         credentials: "include" as RequestCredentials    });
 
-    return await response.json();
+    let i = await response.json();
+    if (i) {
+        id = i.id
+        console.log(id)
+    }
+    return i;
 }
 
 
@@ -64,8 +72,6 @@ export async function loginstatus(): Promise<LoginInfo | false>   {
     return await response.json();
 }
 
-
-
 export async function logout() {
     const url = `${process.env.REACT_APP_API_SERVER_URL}/api/login`;
 
@@ -77,6 +83,51 @@ export async function logout() {
         credentials: "include" as RequestCredentials    });
 
 };
+
+export async function createProtokoll(protokollDaten : ProtokollResource) {
+    const url = `${process.env.REACT_APP_API_SERVER_URL}/api/protokoll/`;
+
+    const response = await fetchWithErrorHandling(url, {
+        method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(protokollDaten),
+            credentials: "include" as RequestCredentials
+    });
+
+    return await response.json(); 
+}
+
+
+export async function updateProtokoll(protokollDaten: ProtokollResource) {
+    const url = `${process.env.REACT_APP_API_SERVER_URL}/api/protokoll/${protokollDaten.id}`;
+  
+    const response = await fetchWithErrorHandling(url, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+
+      },
+      credentials: "include" as RequestCredentials,
+      body: JSON.stringify(protokollDaten),
+    });
+  
+    return await response.json(); 
+  }
+  
+  export async function deleteProtokoll(id : string) {
+    const url = `${process.env.REACT_APP_API_SERVER_URL}/api/protokoll/${id}`;
+  
+    const response = await fetchWithErrorHandling(url, {
+      method: "DELETE",
+      credentials: "include" as RequestCredentials
+    });
+  
+    }
+  
+  
 
 
 

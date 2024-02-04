@@ -1,59 +1,48 @@
-// import './App.css';
-
-import { ErrorBoundary } from "react-error-boundary";
-import ErrorFallback from "./ErrorFallback";
-import { Route, Routes } from "react-router-dom";
-import PageIndex from "./components/PageIndex";
-import PageProtokoll from "./components/PageProtokoll";
-import PageEintrag from "./components/PageEintrag";
-import PageAdmin from "./components/PageAdmin";
-import PagePrefs from "./components/PagePrefs";
-import NavScrollExample from "./components/Navbar";
+import React, { useEffect, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import ErrorFallback from './ErrorFallback';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import PageIndex from './components/PageIndex';
+import PageProtokoll from './components/PageProtokoll';
+import PageEintrag from './components/PageEintrag';
+import PageAdmin from './components/PageAdmin';
+import PagePrefs from './components/PagePrefs';
+import NavScrollExample from './components/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useEffect } from "react";
-import { LoginContext, LoginInfo } from "./components/LoginManager";
-import { loginstatus } from "./backend/api";
-import ForbiddenAccess from "./components/ForbiddenAccess";
-
-
-
-
+import { LoginContext, LoginInfo } from './components/LoginManager';
+import { loginstatus } from './backend/api';
+import ForbiddenAccess from './components/ForbiddenAccess';
+import ProtokollErstellen from './components/ProtokollErstellen'; 
 
 function App() {
+  const [loginInfo, setLoginInfo] = useState<LoginInfo | false | undefined>(undefined);
 
-  const [loginInfo, setLoginInfo] = React.useState<LoginInfo | false | undefined>(undefined);
-
-
-  
   useEffect(() => {
-    (async() => {
-    const loginFromServer = await loginstatus();
-    setLoginInfo(loginFromServer);
-    })();
-    }, []);
-
-    const isAdmin = loginInfo && loginInfo.admin;
+    (async () => {
+      const loginFromServer = await loginstatus();
 
   
-  return (
-    <>
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <LoginContext.Provider value={{ loginInfo, setLoginInfo}}>
+      setLoginInfo(loginFromServer);
+    })();
+  }, []);
 
-        <NavScrollExample />
-      
-        <Routes>
-          <Route path="*" element={<PageIndex/>}/>
-          <Route path="/protokoll/:protokollId" element={<PageProtokoll />}/>
-          <Route path="/eintrag/:eintragId" element={<PageEintrag />}/>
-          <Route path="/admin" element={isAdmin ? <PageAdmin /> : <ForbiddenAccess />}/>
-          <Route path="/prefs" element={isAdmin ? <PagePrefs /> : <ForbiddenAccess />}/>
-        </Routes>
-        </LoginContext.Provider>
-      </ErrorBoundary>
-      
-    </>
+  const isAdmin = loginInfo && loginInfo.admin;
+
+  return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <LoginContext.Provider value={{ loginInfo, setLoginInfo }}>
+          <NavScrollExample />
+          <Routes>
+            <Route path="/" element={<PageIndex />} />
+            <Route path="/protokoll/neu" element={<ProtokollErstellen />} />
+            <Route path="/protokoll/:protokollId" element={<PageProtokoll />} />
+            <Route path="/eintrag/:eintragId" element={<PageEintrag />} />
+            <Route path="/admin" element={isAdmin ? <PageAdmin /> : <ForbiddenAccess />} />
+            <Route path="/prefs" element={isAdmin ? <PagePrefs /> : <ForbiddenAccess />} />
+          </Routes>
+      </LoginContext.Provider>
+    </ErrorBoundary>
   );
 }
-export default App;
 
+export default App;

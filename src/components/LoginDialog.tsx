@@ -23,6 +23,7 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({ show, handleClose }) =
 
             const response = await postLogin(name, password);
             console.log("LoginInfo" + response.id)
+            
             let isAdmin: boolean = false;
                 if(response.role === "a"){
                     isAdmin =true;
