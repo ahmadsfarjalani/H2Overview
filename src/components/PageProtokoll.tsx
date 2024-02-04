@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button, Card, Col, Container, Form, Modal, Row } from "react-bootstrap";
-import { deleteProtokoll, getAlleEintraege, getProtokoll, updateProtokoll } from "../backend/api"; 
+import { deleteProtokoll, getAlleEintraege, getProtokoll, id, updateProtokoll } from "../backend/api"; 
 import LoadingIndicator from "./LoadingIndicator";
 import { EintragResource, ProtokollResource } from "../Resources";
 import { useLoginContext } from "./LoginManager";
@@ -94,11 +94,92 @@ export default function PageProtokoll() {
                                         Letztes Update: {myProtokoll.updatedAt}<br />
                                         Gesamtanzahl der Einträge: {myProtokoll.gesamtMenge}
                                     </Card.Text>
-                                    <Button variant="primary" onClick={() => setHandleShow(true)}>Editieren</Button>
-                                    <Button variant="danger" className="ms-2" onClick={() => setShowDeleteModal(true)}>Protokoll löschen</Button>
+                                    {/* Nur anzeigen, wenn der Benutzer angemeldet ist */}
+                                    {loginInfo&& id === myProtokoll.ersteller && (
+                                        <>
+                                            <Button variant="primary" onClick={() => setHandleShow(true)}>Editieren</Button>
+                                            <Button variant="danger" className="ms-2" onClick={() => setShowDeleteModal(true)}>Löschen</Button>
+                                            <LinkContainer to = {`/protokoll/${protokollId}/eintrag/neu`}>
+                                            <Button variant="secondary">Neuer Eintrag</Button>
+                                            </LinkContainer>
+                                        </>
+                                    )}
+
                                 </Card.Body>
                                 <Card.Footer className="text-muted">Protokoll ID: {protokollId}</Card.Footer>
                             </Card>
+        
+                            {/* Bearbeiten-Modal */}
+                            <Modal show={handleShow} onHide={() => setHandleShow(false)}>
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Protokoll bearbeiten</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <Form>
+                                        <Form.Group className="mb-3">
+                                            <Form.Label>Patient</Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                placeholder="Name des Patienten"
+                                                value={patient}
+                                                onChange={(e) => setPatient(e.target.value)}
+                                            />
+                                        </Form.Group>
+                                        <Form.Group className="mb-3">
+                                            <Form.Label>Datum</Form.Label>
+                                            <Form.Control
+                                                type="date"
+                                                value={datum}
+                                                onChange={(e) => setDatum(e.target.value)}
+                                            />
+                                        </Form.Group>
+                                        <Form.Group className="mb-3">
+                                            <Form.Check
+                                                type="checkbox"
+                                                label="Öffentlich"
+                                                checked={isPublic}
+                                                onChange={(e) => setIsPublic(e.target.checked)}
+                                            />
+                                        </Form.Group>
+                                        <Form.Group className="mb-3">
+                                            <Form.Check
+                                                type="checkbox"
+                                                label="Geschlossen"
+                                                checked={isClosed}
+                                                onChange={(e) => setIsClosed(e.target.checked)}
+                                            />
+                                        </Form.Group>
+                                    </Form>
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    <Button variant="secondary" onClick={() => setHandleShow(false)}>
+                                        Abbrechen
+                                    </Button>
+                                    <Button variant="primary" onClick={updateProtokolle}>
+                                        Speichern
+                                    </Button>
+                                </Modal.Footer>
+                            </Modal>
+        
+                            {/* Löschen-Modal */}
+                            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Löschen</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    Sind Sie sicher, dass Sie dieses Protokoll löschen möchten?
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                                        Abbrechen
+                                    </Button>
+                                    <LinkContainer to ="/">
+                                    <Button variant="danger" onClick={deleteDasProtokoll}>
+                                        OK
+                                    </Button>
+                                    </LinkContainer>
+                                </Modal.Footer>
+                            </Modal>
                         </Col>
                     </Row>
                     {myEintraege.map((eintrag) => (
@@ -108,33 +189,16 @@ export default function PageProtokoll() {
                                     <Card.Body>
                                         <Card.Title>Eintrag {eintrag.id} vom {eintrag.createdAt}</Card.Title>
                                         <Link to={`/eintrag/${eintrag.id}`} className="btn btn-primary">
-                                            Eintrag anzeigen
+                                            Details
                                         </Link>
                                     </Card.Body>
                                 </Card>
                             </Col>
                         </Row>
                     ))}
-                    <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Protokoll löschen</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            Sind Sie sicher, dass Sie dieses Protokoll löschen möchten?
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                                Abbrechen
-                            </Button>
-                            <LinkContainer to = "/">
-                            <Button variant="danger" onClick={deleteDasProtokoll}>
-                                Löschen
-                            </Button>
-                            </LinkContainer>
-                        </Modal.Footer>
-                    </Modal>
                 </Container>
             </div>
         );
+        
 }
 }

@@ -30,16 +30,12 @@ export function NavigationBar() {
                                 <>
                                     <LinkContainer to="/admin"><Nav.Link>Admin</Nav.Link></LinkContainer>
                                     <LinkContainer to="/prefs"><Nav.Link>Preferences</Nav.Link></LinkContainer>
+                                    <LinkContainer to="/protokoll/neu"><Nav.Link>Neues Protokoll</Nav.Link></LinkContainer>
                                 </>
                             )}
                             <Nav.Link onClick={loginInfo ? handleLogout : handleLoginShow}>
                                 {loginInfo ? 'Logout' : 'Login'}
                             </Nav.Link>
-                            {loginInfo && (
-                                <Row className="mb-3">
-                                    <LinkContainer to="/protokoll/neu"><Nav.Link>Neues Protokoll</Nav.Link></LinkContainer>
-                                </Row>
-                            )}
                         </Nav>
                         <Form className="d-flex">
                             <Form.Control type="search" placeholder="Suchen" className="me-2" aria-label="Search" />

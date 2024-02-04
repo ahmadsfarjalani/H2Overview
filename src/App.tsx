@@ -13,6 +13,8 @@ import { LoginContext, LoginInfo } from './components/LoginManager';
 import { loginstatus } from './backend/api';
 import ForbiddenAccess from './components/ForbiddenAccess';
 import ProtokollErstellen from './components/ProtokollErstellen'; 
+import EintragErstellen from './components/EintragErstellen';
+
 
 function App() {
   const [loginInfo, setLoginInfo] = useState<LoginInfo | false | undefined>(undefined);
@@ -36,6 +38,7 @@ function App() {
             <Route path="/" element={<PageIndex />} />
             <Route path="/protokoll/neu" element={<ProtokollErstellen />} />
             <Route path="/protokoll/:protokollId" element={<PageProtokoll />} />
+            <Route path="/protokoll/:protokollId/eintrag/neu" element={<EintragErstellen />} />
             <Route path="/eintrag/:eintragId" element={<PageEintrag />} />
             <Route path="/admin" element={isAdmin ? <PageAdmin /> : <ForbiddenAccess />} />
             <Route path="/prefs" element={isAdmin ? <PagePrefs /> : <ForbiddenAccess />} />

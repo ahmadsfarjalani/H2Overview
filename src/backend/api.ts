@@ -1,6 +1,8 @@
 import { EintragResource, LoginResource, ProtokollResource } from "../Resources";
+import { Eintrag } from "../components/Eintrag";
 import { LoginInfo } from "../components/LoginManager";
 import { fetchWithErrorHandling } from "./fetchWithErrorHandling";
+import { eintraege } from "./testdata";
 export let id : any;
 
 export async function getAlleProtokolle(): Promise<ProtokollResource[]> {
@@ -65,11 +67,16 @@ export async function loginstatus(): Promise<LoginInfo | false>   {
     const response = await fetchWithErrorHandling(url, {
         method: "GET",
         headers: {
-            'Accept': 'application/json'
+            Accept: "application/json",
+        "Content-Type": "application/json"
         },
         credentials: "include" as RequestCredentials    });
+        const responseKheir = await response.json()
 
-    return await response.json();
+        if(responseKheir){
+            id = responseKheir.id;
+        }
+    return responseKheir;
 }
 
 export async function logout() {
@@ -78,7 +85,8 @@ export async function logout() {
     const response = await fetchWithErrorHandling(url, {
         method: "DELETE",
         headers: {
-            'Accept': 'application/json'
+            Accept: "application/json",
+        "Content-Type": "application/json"
         },
         credentials: "include" as RequestCredentials    });
 
@@ -128,9 +136,49 @@ export async function updateProtokoll(protokollDaten: ProtokollResource) {
     }
   
   
+    export async function createEintrag(EintragDaten : EintragResource) {
+        const url = `${process.env.REACT_APP_API_SERVER_URL}/api/eintrag/`;
+        console.log("ICH BIN DABEI " + EintragDaten.ersteller)
+        const response = await fetchWithErrorHandling(url, {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+        
+              },
+                body: JSON.stringify(EintragDaten),
+                credentials: "include" as RequestCredentials
+        });
+    
+        return await response.json(); 
+    }
+
+
+    export async function updateEintrag(EintragDaten: EintragResource) {
+        const url = `${process.env.REACT_APP_API_SERVER_URL}/api/eintrag/${EintragDaten.id}`;
+      
+        const response = await fetchWithErrorHandling(url, {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+    
+          },
+          credentials: "include" as RequestCredentials,
+          body: JSON.stringify(EintragDaten),
+        });
+      
+        return await response.json(); 
+      }
 
 
 
-
-
-
+      export async function deleteEintrag(id : string) {
+        const url = `${process.env.REACT_APP_API_SERVER_URL}/api/eintrag/${id}`;
+      
+        const response = await fetchWithErrorHandling(url, {
+          method: "DELETE",
+          credentials: "include" as RequestCredentials
+        });
+      
+        }

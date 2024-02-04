@@ -67,7 +67,7 @@ if (loginInfo) {
         </Button>
         <LinkContainer to = "/">
         <Button variant="primary" type="submit" onClick={protokollErstellen}>
-        Erstellen
+        Speichern
         </Button>
         </LinkContainer>
       </Form>
