@@ -3,6 +3,7 @@ import { Eintrag } from "../components/Eintrag";
 import { LoginInfo } from "../components/LoginManager";
 import { fetchWithErrorHandling } from "./fetchWithErrorHandling";
 import { eintraege } from "./testdata";
+
 export let id : any;
 
 export async function getAlleProtokolle(): Promise<ProtokollResource[]> {
